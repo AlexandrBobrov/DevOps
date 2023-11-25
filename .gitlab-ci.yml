@@ -1,0 +1,25 @@
+build_images:
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t nginx-customized .
+    - docker build -t postgres-customized .
+    - docker tag nginx-customized $CI_REGISTRY_IMAGE/nginx-customized
+    - docker tag postgres-customized $CI_REGISTRY_IMAGE/postgres-customized
+    - docker push $CI_REGISTRY_IMAGE/nginx-customized
+    - docker push $CI_REGISTRY_IMAGE/postgres-customized
+  tags:
+    - docker
+
+deploy:
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - sed 's/build:/image:/' docker-compose.yml > docker-compose-deploy.yaml
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker-compose -f docker-compose-deploy.yaml up -d
+  tags:
+    - docker
