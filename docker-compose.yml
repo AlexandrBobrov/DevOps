@@ -14,7 +14,7 @@ services:
       context: .
       dockerfile: Dockerfile.postgres
     environment:
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
-      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=ABobrov
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=database
     restart: always
