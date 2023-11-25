@@ -23,3 +23,26 @@ deploy:
     - docker-compose -f docker-compose-deploy.yaml up -d
   tags:
     - docker
+
+
+deploy compose:
+  stage: deploy
+  image: docker:latest
+  variables:
+    SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
+    SSH_PORT: $SSH_PORT
+    NGINX_PORT: $NGINX_PORT
+    POSTGRES_PORT: $POSTGRES_PORT
+  before_script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - scp -P $SSH_PORT docker-compose.yaml studentXX@master.hadoop.akhcheck.ru:/home/studentXX/docker-compose.yaml
+    - ssh -p $SSH_PORT studentXX@master.hadoop.akhcheck.ru "cd /home/studentXX && docker-compose -f docker-compose.yaml up -d"
+  dependencies:
+    - build_image
+  only:
+    - master
