@@ -41,7 +41,7 @@ deploy compose:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
     - scp -P $SSH_PORT docker-compose.yaml student56@master.hadoop.akhcheck.ru:/home/student56/docker-compose.yaml
-    - ssh -p $SSH_PORT studentXX@master.hadoop.akhcheck.ru "cd /home/student56 && docker-compose -f docker-compose.yaml up -d"
+    - ssh -p $SSH_PORT student56@master.hadoop.akhcheck.ru "cd /home/student56 && docker-compose -f docker-compose.yaml up -d"
   dependencies:
     - build_image
   only:
